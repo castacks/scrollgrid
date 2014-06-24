@@ -13,6 +13,8 @@
 
 namespace ca
 {
+namespace scrollgrid
+{
 
 /**
  * Axis-aligned bounding box intersection test.
@@ -262,6 +264,6 @@ void bresenham_trace_simple(const Vec3Ix& start_pos,
   }
 }
 
-
+}
 }
 #endif /* end of include guard: RAYCASTING_HPP_OLVFBMND */

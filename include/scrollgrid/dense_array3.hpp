@@ -18,6 +18,8 @@
 
 namespace ca
 {
+namespace scrollgrid
+{
 
 /**
  * A dense 3D array.
@@ -243,6 +245,6 @@ private:
   bool owns_memory_;
 };
 
+}
 } /* ca */
-
 #endif /* end of include guard: DENSE_ARRAY3_HPP_JEO7CAXQ */

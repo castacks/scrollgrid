@@ -5,6 +5,8 @@
 
 namespace ca
 {
+namespace scrollgrid
+{
 
 /**
  * Unlike c modulus operator (%), does not return negative numbers.
@@ -39,6 +41,7 @@ void inplace_mod_wrap(T& x, T y) {
   x -= (std::floor(static_cast<float>(x)/y)*y);
 }
 
-} /* ca */
+}
+}
 
 #endif /* end of include guard: ALGO_UTIL_HPP_ZB5UF8WS */

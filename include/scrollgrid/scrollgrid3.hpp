@@ -19,6 +19,8 @@
 
 namespace ca
 {
+namespace scrollgrid
+{
 
 // TODO this could also be achieved with templates.
 
@@ -578,6 +580,7 @@ public:
 typedef ScrollGrid3<float> ScrollGrid3f;
 typedef ScrollGrid3<double> ScrollGrid3d;
 
+}
 } /* ca */
 
 #endif /* end of include guard: SCROLLGRID3_HPP_I9SAOOSJ */

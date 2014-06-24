@@ -11,6 +11,8 @@
 
 namespace ca
 {
+namespace scrollgrid
+{
 
 /**
  * Assumes input is a decent hash key to begin with
@@ -92,6 +94,7 @@ private:
 
 };
 
+}
 } /* ca */
 
 #endif /* end of include guard: SPARSE_ARRAY3_HPP_LWA5VI1M */

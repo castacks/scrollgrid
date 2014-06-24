@@ -22,6 +22,8 @@
 
 namespace ca
 {
+namespace scrollgrid
+{
 
 template<class CellT>
 class FixedGrid2 {
@@ -260,6 +262,7 @@ public:
 
 };
 
+}
 }
 
 #endif /* end of include guard: FIXEDGRID2_HPP_UYCWT1KR */

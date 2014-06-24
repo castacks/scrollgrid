@@ -12,6 +12,8 @@
 
 namespace ca
 {
+namespace scrollgrid
+{
 
 template<class Scalar>
 class ScrollForBaseFrame {
@@ -209,6 +211,7 @@ private:
 
 };
 
+}
 } /* ca */
 
 #endif /* end of include guard: SCROLLING_STRATEGIES_HPP_ITK653BW */

@@ -18,6 +18,8 @@
 
 namespace ca
 {
+namespace scrollgrid
+{
 
 /**
  * A dense 2D array.
@@ -163,6 +165,7 @@ private:
   iterator begin_, end_;
 };
 
-} /* ca */
+}
 
+}
 #endif /* end of include guard: DENSE_ARRAY2_HPP_ZJGDW1JR */

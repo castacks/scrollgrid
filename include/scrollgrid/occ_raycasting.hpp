@@ -11,6 +11,8 @@
 
 namespace ca
 {
+namespace scrollgrid
+{
 
 static const int32_t CA_SG_COMPLETELY_FREE = 0;
 static const int32_t CA_SG_COMPLETELY_OCCUPIED = 250;
@@ -148,8 +150,8 @@ void occupancy_trace_simple(const Vec3Ix& start_pos, // in ijk
   array3[mem_ix] = static_cast<uint8_t>(std::min(CA_SG_COMPLETELY_OCCUPIED, new_value));
 
 }
-} /* ca
- */
+
+}
+}
 
 #endif /* end of include guard: OCC_RAYCASTING_HPP_7K2XI8HT */
-

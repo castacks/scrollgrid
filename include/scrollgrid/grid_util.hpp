@@ -13,6 +13,8 @@
 
 namespace ca
 {
+namespace scrollgrid
+{
 
 /**
  * Given a scrolling grid3 (maps world ijk to grid ijk), a storage array,
@@ -162,6 +164,7 @@ void clear_array2(const ca::ScrollGrid2<Scalar>& grid2,
 
 }
 
+}
 } /* ca */
 
 #endif /* end of include guard: GRID_UTIL_HPP_L137PMBO */

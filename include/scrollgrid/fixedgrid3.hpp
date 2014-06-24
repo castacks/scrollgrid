@@ -21,6 +21,8 @@
 
 namespace ca
 {
+namespace scrollgrid
+{
 
 template<class Scalar>
 class FixedGrid3 {
@@ -239,6 +241,6 @@ public:
 typedef FixedGrid3<double> FixedGrid3d;
 typedef FixedGrid3<float> FixedGrid3f;
 
-} /* ca */
-
+}
+}
 #endif /* end of include guard: FIXEDGRID3_HPP_6KPVVRZF */

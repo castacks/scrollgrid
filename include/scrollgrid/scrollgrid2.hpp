@@ -21,6 +21,8 @@
 
 namespace ca
 {
+namespace scrollgrid
+{
 
 template<class Scalar>
 class ScrollGrid2 {
@@ -397,6 +399,7 @@ public:
 typedef ScrollGrid2<float> ScrollGrid2f;
 typedef ScrollGrid2<double> ScrollGrid2d;
 
+}
 } /* ca */
 
 #endif /* end of include guard: SCROLLGRID2_HPP_YPBBYE5Q */
