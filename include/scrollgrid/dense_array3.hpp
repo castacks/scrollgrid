@@ -27,6 +27,8 @@ namespace ca
  * TODO maybe use boost::shared_array,
  * or std::shared_array if we move to C++11
  *
+ * Note: when using this to manage memory it's probably not
+ * thread-safe.
  */
 template<class CellT>
 class DenseArray3 {
@@ -63,6 +65,9 @@ public:
       owns_memory_(false)
   { }
 
+  /**
+   * Create a new storage assuming ownership of the memory.
+   */
   DenseArray3(const Vec3Ix& dimension) :
       dimension_(dimension),
       num_cells_(dimension.prod()),
@@ -74,7 +79,8 @@ public:
   { }
 
   /**
-   * Used when wrapping an external chunk of data.
+   * Create new storage wrapping an external chunk of memory.
+   * Does not assume ownership of the memory, i.e. you must manage it yourself.
    */
   DenseArray3(const Vec3Ix& dimension, ArrayType grid_data) :
       dimension_(dimension),
@@ -86,8 +92,52 @@ public:
       owns_memory_(false)
   { }
 
-  void CopyFrom(const DenseArray3& other) {
+  /**
+   * Warning:
+   * This only creates a WRAPPER of the memory in other, not a copy.
+   * But there is no fancy memory management. Be careful!
+   */
+  DenseArray3(const DenseArray3& other) :
+      dimension_(other.dimension_),
+      num_cells_(other.num_cells_),
+      strides_(other.data_),
+      grid_(other.grid_),
+      begin_(other.begin_),
+      end_(other.end_),
+      owns_memory_(false)
+  {
+  }
+
+  /**
+   * Warning:
+   * This only creates a WRAPPER of the memory in other, not a copy.
+   * But there is no fancy memory management. Be careful!
+   */
+  DenseArray3& operator=(const DenseArray3& other) {
+    if (this==&other) { return *this; }
+    dimension_ = other.dimension_;
+    num_cells_ = other.num_cells_;
+    strides_ = other.data_;
+    grid_ = other.grid_;
+    begin_ = other.begin_;
+    end_ = other.end_;
+    owns_memory_ = false;
+  }
+
+  /**
+   * Allocates storage with same size as other and copies contents from other.
+   */
+  void ResetAndCopyFrom(const DenseArray3& other) {
     this->reset(other.dimension());
+    std::copy(other.begin(), other.end(), this->begin());
+  }
+
+  /**
+   * Copies contents from other.
+   * WARNING: This assumes the current storage has the same dimensions
+   * as other. If this is not true, this will crash.
+   */
+  void CopyFrom(const DenseArray3& other) {
     std::copy(other.begin(), other.end(), this->begin());
   }
 
@@ -95,6 +145,9 @@ public:
     if (owns_memory_ && grid_) { delete[] grid_; grid_ = NULL; }
   }
 
+  /**
+   * Free memory (if we have ownership) and reallocate.
+   */
   void reset(const Vec3Ix& dimension) {
     dimension_ = dimension;
     num_cells_ = dimension.prod();
@@ -108,6 +161,10 @@ public:
     end_ = &(grid_[0])+num_cells_;
   }
 
+  /**
+   * Free memory (if we have ownership) and wrap memory in grid_data.
+   * Does NOT assume ownership.
+   */
   void reset(const Vec3Ix& dimension, ArrayType grid_data) {
     if (owns_memory_ && grid_) { delete[] grid_; }
     dimension_ = dimension;
@@ -123,6 +180,7 @@ public:
   size_t allocated_bytes() {
     return sizeof(CellT)*num_cells_;
   }
+
 
 public:
 
