@@ -100,7 +100,7 @@ public:
   DenseArray3(const DenseArray3& other) :
       dimension_(other.dimension_),
       num_cells_(other.num_cells_),
-      strides_(other.data_),
+      strides_(other.strides_),
       grid_(other.grid_),
       begin_(other.begin_),
       end_(other.end_),
@@ -117,7 +117,7 @@ public:
     if (this==&other) { return *this; }
     dimension_ = other.dimension_;
     num_cells_ = other.num_cells_;
-    strides_ = other.data_;
+    strides_ = other.strides_;
     grid_ = other.grid_;
     begin_ = other.begin_;
     end_ = other.end_;
@@ -300,9 +300,6 @@ private:
   // does this object own the grid_ mem
   bool owns_memory_;
 
-private:
-  DenseArray3(const DenseArray3& other);
-  DenseArray3& operator=(const DenseArray3& other);
 };
 
 } /* ca */
