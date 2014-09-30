@@ -26,7 +26,7 @@ public:
 
     // if you want to center box around sensor/robot, use (0,0,0)
     double x, y, z;
-    nh.param<double>("/scrolling_strategies/target_sensor_to_center_x", x, 0);
+    nh.param<double>("/scrolling_strategies/target_sensor_to_center_x", x, 0);   //TODO change it, if u want a new scrolling strategy.
     nh.param<double>("/scrolling_strategies/target_sensor_to_center_y", y, 0);
     nh.param<double>("/scrolling_strategies/target_sensor_to_center_z", z, 0);
     target_sensor_to_center_.x() = x;
@@ -41,16 +41,10 @@ public:
     scroll_dist_thresh_.y() = y;
     scroll_dist_thresh_.z() = z;
   }
-  ScrollForBaseFrame(Vec3 target_sensor_to_center, Vec3 scroll_dist_thresh):
-    target_sensor_to_center_(target_sensor_to_center),
-    scroll_dist_thresh_(scroll_dist_thresh){
-  }
 
-  public:
-  void setParameters(Vec3 target_sensor_to_center, Vec3 scroll_dist_thresh) {
-    target_sensor_to_center_ = target_sensor_to_center;
-    scroll_dist_thresh_ = scroll_dist_thresh;
-  }
+  virtual ~ScrollForBaseFrame() { }
+
+public:
 
   ca::Vec3Ix compute(const tf::Transform& wv2laser,
                      const ca::ScrollGrid3<Scalar>& grid) {
@@ -73,7 +67,10 @@ public:
     //origin_laser += target_sensor_to_center_rot;
 
     tf::Vector3 target_sensor_to_center = wv2laser * ca::point_cast< tf::Vector3 >(target_sensor_to_center_);
-    Vec3 origin_laser = ca::point_cast<Vec3>(target_sensor_to_center);
+    
+    Vec3 origin_laser = ca::point_cast<Vec3>(target_sensor_to_center);   //sensor position in world frame.
+    
+//     ROS_ERROR_STREAM("sensor_pos = "<<origin_laser);
 
     // compute if it is too close to grid boundaries, and change scroll_cells
     // accordingly
@@ -83,12 +80,16 @@ public:
     Vec3 center(grid.center());
     Vec3 radius(grid.radius());
     Vec3 deviation( (origin_laser-center) );
+    
     Vec3 abs_deviation( deviation.cwiseAbs() );
+    
     Scalar resolution = grid.resolution();
     scroll_cells[0] = static_cast<grid_ix_t>(round(deviation[0]/resolution));
     scroll_cells[1] = static_cast<grid_ix_t>(round(deviation[1]/resolution));
     scroll_cells[2] = static_cast<grid_ix_t>(round(deviation[2]/resolution));
 
+    
+    
     // how to interpret the scroll_dist_thresh parameter
     //
     // C = center

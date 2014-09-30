@@ -25,7 +25,6 @@ namespace ca
 template<class Scalar>
 class FixedGrid3 {
 public:
-  typedef Scalar ScalarType; // TODO what is my convention for this?
   typedef Eigen::Matrix<Scalar, 3, 1> Vec3;
 
   typedef boost::shared_ptr<FixedGrid3> Ptr;
@@ -45,7 +44,6 @@ public:
    * @param center: center of the grid in global frame
    * @param dimension: number of grid cells along each coordinate
    * @param resolution: size of each grid cell side. they are cubic.
-   * Assuming "ZYX" layout, i.e. z changes fastest.
    */
   FixedGrid3(const Vec3& center,
              const Vec3Ix& dimension,
@@ -72,7 +70,7 @@ public:
   }
 
   FixedGrid3& operator=(const FixedGrid3& other) {
-    if (this==&other) { return *this; }
+    if (*this==other) { return *this; }
     box_ = other.box_;
     origin_ = other.origin_;
     dimension_ = other.dimension_;
@@ -91,7 +89,7 @@ public:
              const Vec3Ix& dimension,
              Scalar resolution) {
     box_.set_center(center);
-    box_.set_radius((dimension.template cast<Scalar>()*resolution)/2);
+    box_.set_radius((dimension.cast<double>()*resolution)/2);
     origin_ = center - box_.radius();
     dimension_ = dimension;
     num_cells_ = dimension.prod();
@@ -99,17 +97,12 @@ public:
     resolution_ = resolution;
   }
 
-
   /**
    * Is pt inside 3D box containing grid?
    * @param pt point in same frame as center (probably world_view)
    */
   bool is_inside_box(const Vec3& pt) const {
     return box_.contains(pt);
-  }
-
-  bool is_inside_box(Scalar x, Scalar y, Scalar z) const {
-    return box_.contains(Vec3(x, y, z));
   }
 
   template<class PointT>
@@ -159,18 +152,18 @@ public:
   /**
    * given grid ijk coordinate, return linear memory index.
    */
-  mem_ix_t grid_to_mem(grid_ix_t i, grid_ix_t j, grid_ix_t k) const {
+  grid_ix_t grid_to_mem(grid_ix_t i, grid_ix_t j, grid_ix_t k) const {
     return this->grid_to_mem(Vec3Ix(i, j, k));
   }
 
-  mem_ix_t grid_to_mem(const Vec3Ix& grid_ix) const {
+  grid_ix_t grid_to_mem(const Vec3Ix& grid_ix) const {
     return strides_.dot(grid_ix);
   }
 
   /**
    * given linear memory index, return ijk coordinate.
    */
-  Vec3Ix mem_to_grid(mem_ix_t mem_ix) const {
+  Vec3Ix mem_to_grid(grid_ix_t mem_ix) const {
     grid_ix_t i = mem_ix/strides_[0];
     mem_ix -= i*strides_[0];
     grid_ix_t j = mem_ix/strides_[1];
@@ -195,12 +188,10 @@ public:
     ROS_ASSERT( i > std::numeric_limits<int16_t>::min() && i < std::numeric_limits<int16_t>::max() );
     ROS_ASSERT( j > std::numeric_limits<int16_t>::min() && j < std::numeric_limits<int16_t>::max() );
     ROS_ASSERT( k > std::numeric_limits<int16_t>::min() && k < std::numeric_limits<int16_t>::max() );
-    // TODO get from scrollgrid3
     return 0;
   }
 
  public:
-  const ca::scrollgrid::Box<Scalar, 3>& box() const { return box_; }
   grid_ix_t dim_i() const { return dimension_[0]; }
   grid_ix_t dim_j() const { return dimension_[1]; }
   grid_ix_t dim_k() const { return dimension_[2]; }
@@ -216,7 +207,7 @@ public:
   Vec3 min_pt() const { return box_.min_pt(); }
   Vec3 max_pt() const { return box_.max_pt(); }
   const Vec3& center() const { return box_.center(); }
-  Scalar resolution() const { return resolution_; }
+  double resolution() const { return resolution_; }
 
   // basically equivalent to scroll_offset = (0, 0, 0)
   grid_ix_t num_cells() const { return num_cells_; }

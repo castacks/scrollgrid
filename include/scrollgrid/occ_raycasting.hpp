@@ -9,18 +9,21 @@
 #include "scrollgrid/scrollgrid3.hpp"
 #include "scrollgrid/dense_array3.hpp"
 
+#include <math.h> 
+
 namespace ca
 {
 
 static const int32_t CA_SG_COMPLETELY_FREE = 0;
-static const int32_t CA_SG_COMPLETELY_OCCUPIED = 250;
-static const int32_t CA_SG_BELIEF_UPDATE_POS = 20; // when hit
-static const int32_t CA_SG_BELIEF_UPDATE_NEG = 2; // when pass-through
+static const int32_t CA_SG_COMPLETELY_OCCUPIED = 255;
+static const int32_t CA_SG_BELIEF_UPDATE_POS = 20; // when hit  20
+static const int32_t CA_SG_BELIEF_UPDATE_NEG = 10; // when pass-through  2
 
 template<class TraceFunctor>
 void occupancy_trace(const Vec3Ix& start_pos,
                      const Vec3Ix& end_pos,
-                     const TraceFunctor& fun) {
+                     const TraceFunctor& fun,
+		     double distance) {  //TODO add distance
   // beware: vec3ix are int64_t
   int x = start_pos[0],
       y = start_pos[1],
@@ -68,7 +71,9 @@ void occupancy_trace(const Vec3Ix& start_pos,
          ;
          x+=sx, decy+=ay, decz+=az) {
       //SetP ( grid,x,y,z,end_pos, atMax, count);
-      fun(x,y,z,false);
+//       fun(x,y,z,false,distance);
+      distance=sqrt((x-start_pos[0])*(x-start_pos[0])+(y-start_pos[1])*(y-start_pos[1])+(z-start_pos[2])*(z-start_pos[2]));
+      fun(x,y,z,false,distance);
       //Bresenham step
       if ( x==end_pos[0] ) break;
       if ( decy>=0 ) {
@@ -86,7 +91,9 @@ void occupancy_trace(const Vec3Ix& start_pos,
          ;
          y+=sy,decx+=ax,decz+=az ) {
       // SetP ( grid,x,y,z,end_pos, atMax, count);
-      fun(x,y,z,false);
+//       fun(x,y,z,false,distance);
+      distance=sqrt((x-start_pos[0])*(x-start_pos[0])+(y-start_pos[1])*(y-start_pos[1])+(z-start_pos[2])*(z-start_pos[2]));
+      fun(x,y,z,false,distance);
       //Bresenham step
       if ( y==end_pos[1] ) break;
       if ( decx>=0 ) {
@@ -104,7 +111,9 @@ void occupancy_trace(const Vec3Ix& start_pos,
          ;
          z+=sz,decx+=ax,decy+=ay ) {
       //SetP ( grid,x,y,z,end_pos, atMax, count);
-      fun(x,y,z,false);
+//       fun(x,y,z,false,distance);
+      distance=sqrt((x-start_pos[0])*(x-start_pos[0])+(y-start_pos[1])*(y-start_pos[1])+(z-start_pos[2])*(z-start_pos[2]));
+      fun(x,y,z,false,distance);
       //Bresenham step
       if ( z==end_pos[2] ) break;
       if ( decx>=0 ) {
@@ -116,7 +125,9 @@ void occupancy_trace(const Vec3Ix& start_pos,
       }
     }
   }
-  fun(x,y,z,true);
+//       fun(x,y,z,true,distance);
+      distance=sqrt((x-start_pos[0])*(x-start_pos[0])+(y-start_pos[1])*(y-start_pos[1])+(z-start_pos[2])*(z-start_pos[2]));
+      fun(x,y,z,true,distance);
 }
 
 /**
@@ -225,7 +236,7 @@ void occupancy_trace_simple(const Vec3Ix& start_pos, // in ijk
          ;
          z+=sz,decx+=ax,decy+=ay ) {
 
-      mem_ix_t mem_ix = grid3.grid_to_mem(x, y, z);
+      grid_ix_t mem_ix = grid3.grid_to_mem(x, y, z);
       int32_t new_value = static_cast<int32_t>(array3[mem_ix])-CA_SG_BELIEF_UPDATE_NEG;
       array3[mem_ix] = static_cast<uint8_t>(std::max(CA_SG_COMPLETELY_FREE, new_value));
 
@@ -245,7 +256,7 @@ void occupancy_trace_simple(const Vec3Ix& start_pos, // in ijk
   // here we are at the end of the ray.
   // here we update according to xyz
 
-  mem_ix_t mem_ix = grid3.grid_to_mem(x, y, z);
+  grid_ix_t mem_ix = grid3.grid_to_mem(x, y, z);
   int32_t new_value = static_cast<int32_t>(array3[mem_ix])+CA_SG_BELIEF_UPDATE_POS;
   array3[mem_ix] = static_cast<uint8_t>(std::min(CA_SG_COMPLETELY_OCCUPIED, new_value));
 

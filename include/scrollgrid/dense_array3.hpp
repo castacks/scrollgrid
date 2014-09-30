@@ -24,8 +24,6 @@ namespace ca
  * Maps ijk to an CellT.
  * No notion of origin, scrolling etc.
  * The *Grid3 classes handle that.
- * TODO maybe use boost::shared_array,
- * or std::shared_array if we move to C++11
  *
  */
 template<class CellT>
@@ -67,15 +65,12 @@ public:
       dimension_(dimension),
       num_cells_(dimension.prod()),
       strides_(dimension.tail<2>().prod(), dimension[2], 1),
-      grid_(new CellT[num_cells_]()),
+      grid_(new CellT[num_cells_]),
       begin_(&grid_[0]),
       end_(&grid_[0]+num_cells_),
       owns_memory_(true)
   { }
 
-  /**
-   * Used when wrapping an external chunk of data.
-   */
   DenseArray3(const Vec3Ix& dimension, ArrayType grid_data) :
       dimension_(dimension),
       num_cells_(dimension.prod()),
@@ -86,13 +81,30 @@ public:
       owns_memory_(false)
   { }
 
-  void CopyFrom(const DenseArray3& other) {
-    this->reset(other.dimension());
-    std::copy(other.begin(), other.end(), this->begin());
+  DenseArray3(const DenseArray3& other) {
+    dimension_ = other.dimension_;
+    num_cells_ = other.num_cells_;
+    strides_ = other.strides_;
+    grid_ = other.grid_;
+    begin_ = other.begin_;
+    end_ = other.end_;
+    owns_memory_ = other.owns_memory_;
+  }
+
+  DenseArray3& operator=(const DenseArray3& other) {
+    if (this==&other) { return *this; }
+    dimension_ = other.dimension_;
+    num_cells_ = other.num_cells_;
+    strides_ = other.strides_;
+    grid_ = other.grid_;
+    begin_ = other.begin_;
+    end_ = other.end_;
+    owns_memory_ = other.owns_memory_;
+    return *this;
   }
 
   virtual ~DenseArray3() {
-    if (owns_memory_ && grid_) { delete[] grid_; grid_ = NULL; }
+    if (owns_memory_ && grid_) { delete[] grid_; }
   }
 
   void reset(const Vec3Ix& dimension) {
@@ -121,18 +133,8 @@ public:
   }
 
   size_t allocated_bytes() {
-    return sizeof(CellT)*num_cells_;
+    return sizeof(CellType)*num_cells_;
   }
-
-public:
-
-  void fill(const CellT& val) {
-    std::fill(this->begin(), this->end(), val);
-  }
-
-public:
-  iterator begin() const { return begin_; }
-  iterator end() const { return end_; }
 
 public:
 
@@ -185,7 +187,6 @@ public:
 
   /**
    * Bound check with ROS_ASSERT
-   * Not 'really' safe
    */
   CellType& get_safe(grid_ix_t mem_ix) {
     ROS_ASSERT(mem_ix >= 0 && mem_ix < num_cells_);
@@ -194,7 +195,6 @@ public:
 
   /**
    * Bound check with ROS_ASSERT
-   * Not 'really' safe
    */
   const CellType& get_safe(grid_ix_t mem_ix) const {
     ROS_ASSERT(mem_ix >= 0 && mem_ix < num_cells_);
@@ -241,10 +241,6 @@ private:
 
   // does this object own the grid_ mem
   bool owns_memory_;
-
-private:
-  DenseArray3(const DenseArray3& other);
-  DenseArray3& operator=(const DenseArray3& other);
 };
 
 } /* ca */
