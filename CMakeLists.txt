@@ -33,7 +33,16 @@ if (CATKIN_ENABLE_TESTING)
     target_link_libraries(${PROJECT_NAME}_scrollgrid3_tests ${catkin_LIBRARIES})
 endif()
 
+# set the build type: "Choose the type of build. Options are: None, Debug, Release, RelWithDebInfo, MinSizeRel"
+set(CMAKE_BUILD_TYPE Release)
+
 include_directories(include)
 add_executable(${PROJECT_NAME}_examples src/examples.cpp)
 target_link_libraries(${PROJECT_NAME}_examples ${catkin_LIBRARIES})
+
+
+message("---------------------------------------------")
+message(${PROJECT_NAME} " Configuration Summary")
+message("Build type:                    ${CMAKE_BUILD_TYPE}")
+message("---------------------------------------------")
 
