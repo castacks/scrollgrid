@@ -73,7 +73,9 @@ public:
     //origin_laser += target_sensor_to_center_rot;
 
     tf::Vector3 target_sensor_to_center = wv2laser * ca::point_cast< tf::Vector3 >(target_sensor_to_center_);
-    Vec3 origin_laser = ca::point_cast<Vec3>(target_sensor_to_center);
+    Vec3 origin_laser = ca::point_cast<Vec3>(target_sensor_to_center);  //sensor position in world frame.
+    
+//     ROS_ERROR_STREAM("sensor_pos = "<<origin_laser);
 
     // compute if it is too close to grid boundaries, and change scroll_cells
     // accordingly
