@@ -20,8 +20,11 @@
 namespace ca
 {
 
-// TODO this could also be achieved with templates.
-
+/**
+ * These are empty functors defining the interface for callbacks
+ * to clear cells and fix edges.
+ * TODO this could also be achieved with templates.
+ */
 struct ClearCellsFun {
   virtual void operator()(const Vec3Ix& start,
                           const Vec3Ix& finish) const { }
@@ -217,18 +220,32 @@ public:
     this->update_wrap_ijk();
   }
 
+/**
+   * functionally same as just_scroll.
+   * special case of scroll_and_clear_and_fix.
+   */
   void scroll(const Vec3Ix& offset_cells) {
     ClearCellsFun nullclear;
     FixEdgesFun nullfix;
     this->scroll_and_clear_and_fix(offset_cells, nullclear, nullfix);
   }
 
+/**
+   * scroll grid by offset_cells and call clear_cells_fun on outgoing/incoming
+   * cells.
+   * special case of scroll_and_clear_and_fix.
+   */  
+  
   void scroll_and_clear(const Vec3Ix& offset_cells,
                         const ClearCellsFun& clear_cells_fun) {
     FixEdgesFun nullfix;
     this->scroll_and_clear_and_fix(offset_cells, clear_cells_fun, nullfix);
   }
 
+/**
+   * scroll grid by offset_cells, call fix_edges_fun on outgoing/incoming
+   * edges, and clear_cells_fun on outgoing/incoming cells.
+   */  
   void scroll_and_clear_and_fix(const Vec3Ix& offset_cells,
                                 const ClearCellsFun& clear_cells_fun,
                                 const FixEdgesFun& fix_edges_fun) {
@@ -511,6 +528,8 @@ public:
   grid_ix_t last_j() const { return last_ijk_[1]; }
   grid_ix_t last_k() const { return last_ijk_[2]; }
   const Vec3Ix& scroll_offset() const { return scroll_offset_; }
+  const Vec3Ix& unwrap_ijk() const { return unwrap_ijk_; }
+//   const Vec3Ix& unwrap_ijk_() const { return unwrap_ijk_; }
   const Vec3Ix& radius_ijk() const { return radius_ijk_; }
   const Vec3Ix& dimension() const { return dimension_; }
   const Vec3& radius() const { return box_.radius(); }
@@ -579,11 +598,11 @@ public:
   // should always be dimension + offset
   Vec3Ix last_ijk_;
 
-  // for grid_to_mem. the points where the grid crosses modulo boundaries.
+  // for grid_to_mem. the points where the grid crosses modulo boundaries. // nearly boundary pt
   Vec3Ix wrap_ijk_min_;
   Vec3Ix wrap_ijk_max_;
 
-  // delimits when extra offset needs to be added when unwrapping
+  // delimits when extra offset needs to be added when unwrapping  offset % dimension 余数
   Vec3Ix unwrap_ijk_;
 
 
