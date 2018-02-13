@@ -5,10 +5,11 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 find_package(catkin REQUIRED COMPONENTS
     roscpp
+    eigen_catkin
 )
 
 find_package(Boost REQUIRED)
-find_package(Eigen3 3.3.1 REQUIRED)
+#find_package(Eigen3 3.3.1 REQUIRED)
 
 #common commands for building c++ executables and libraries
 #add_library(${PROJECT_NAME} src/example.cpp)
@@ -21,8 +22,8 @@ find_package(Eigen3 3.3.1 REQUIRED)
 # catkin_package parameters: http://ros.org/doc/groovy/api/catkin/html/dev_guide/generated_cmake_api.html#catkin-package
 # TODO: fill in what other packages will need to use this package
 catkin_package(
-    DEPENDS Eigen3
-    CATKIN_DEPENDS roscpp
+    DEPENDS
+    CATKIN_DEPENDS roscpp eigen_catkin
     INCLUDE_DIRS include
     LIBRARIES
 )

@@ -17,7 +17,7 @@
   <buildtool_depend>catkin</buildtool_depend>
 
   <depend>cmake_modules</depend>
-  <depend>eigen</depend>
+  <depend>eigen_catkin</depend>
   <depend>pcl_util</depend>
   <depend>roscpp</depend>
 
